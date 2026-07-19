@@ -137,3 +137,10 @@ readonly CROWDSEC_BOUNCER_NAME="traefik"
 readonly CROWDSEC_BOUNCER_DIR="${TRAEFIK_DIR}/crowdsec"
 
 readonly CROWDSEC_BOUNCER_KEY_FILE="${CROWDSEC_BOUNCER_DIR}/BOUNCER_KEY_${CROWDSEC_BOUNCER_NAME}"
+
+###############################################################################
+# Grafana
+###############################################################################
+
+readonly GRAFANA_SERVICE="grafana"
+readonly GRAFANA_DIR="${DATA_DIR}/grafana"
