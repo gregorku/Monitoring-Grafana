@@ -44,6 +44,15 @@ services:
 
       - --configFile=/etc/traefik/traefik.yml
 
+      #
+      # Let's Encrypt account e-mail.
+      #
+      # Passed as a CLI flag because Traefik does not
+      # expand ${VAR} placeholders inside traefik.yml.
+      #
+
+      - --certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_ACME_EMAIL}
+
     ###########################################################################
     # Networks
     ###########################################################################
