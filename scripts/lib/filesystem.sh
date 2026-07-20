@@ -30,6 +30,32 @@ ensure_directory() {
 }
 
 ###############################################################################
+# Create directory with a specific owner
+#
+# Usage:
+#   ensure_directory_owner /path/to/directory 65534:65534
+#
+# Notes:
+#   Needed for containers that run as a non-root user
+#   (e.g. Prometheus runs as "nobody" / 65534:65534) and
+#   would otherwise get "permission denied" writing to a
+#   bind-mounted directory owned by root.
+#
+###############################################################################
+
+ensure_directory_owner() {
+
+    local directory="$1"
+    local owner="$2"
+
+    ensure_directory "${directory}"
+
+    chown -R "${owner}" "${directory}"
+
+    ok "Owner ${owner}: ${directory}"
+}
+
+###############################################################################
 # Create file
 #
 # Usage:
