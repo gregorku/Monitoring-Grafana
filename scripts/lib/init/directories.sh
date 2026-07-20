@@ -40,6 +40,8 @@ init_directories()
     ensure_directory "${CROWDSEC_DIR}"
     ensure_directory "${WATCHTOWER_DIR}"
     ensure_directory "${METABASE_DIR}"
+    ensure_directory "${GRAFANA_DIR}"
+    ensure_directory "${PROMETHEUS_DIR}"
 
     log_success "Project directories ready."
 }
