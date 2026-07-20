@@ -144,3 +144,10 @@ readonly CROWDSEC_BOUNCER_KEY_FILE="${CROWDSEC_BOUNCER_DIR}/BOUNCER_KEY_${CROWDS
 
 readonly GRAFANA_SERVICE="grafana"
 readonly GRAFANA_DIR="${DATA_DIR}/grafana"
+
+###############################################################################
+# Prometheus
+###############################################################################
+
+readonly PROMETHEUS_SERVICE="prometheus"
+readonly PROMETHEUS_DIR="${DATA_DIR}/prometheus"
