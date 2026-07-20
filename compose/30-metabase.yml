@@ -135,17 +135,20 @@ services:
       bridge-moje:
         ipv4_address: ${IP_METABASE}
 
+      #
+      # Attached so Traefik can reach the container by
+      # name. Routing itself is handled by the file
+      # provider (configs/traefik/dynamic/metabase.yml),
+      # published only on the "admin" (WireGuard) entryPoint
+      # and protected by default-chain (IP whitelist + BasicAuth).
+      #
+      # No Docker labels / router here on purpose -- this
+      # keeps Metabase off the public Docker provider so it
+      # can never be accidentally exposed on :443.
+      #
+
       traefik-moje:
 
     labels:
 
-      - traefik.enable=true
-
-      - traefik.docker.network=traefik-moje
-
-#      - traefik.http.routers.metabase.rule=PathPrefix(`/metabase`)
-      - traefik.http.routers.metabase.rule=PathPrefix(`/`)     
-      - traefik.http.routers.metabase.entrypoints=websecure
-      - traefik.http.routers.metabase.tls=true
-
-      - traefik.http.services.metabase.loadbalancer.server.port=3000      
+      - "com.centurylinklabs.watchtower.enable=true"
