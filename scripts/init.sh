@@ -59,6 +59,8 @@ source "${SCRIPT_DIR}/lib/init/networks.sh"
 source "${SCRIPT_DIR}/lib/init/traefik.sh"
 source "${SCRIPT_DIR}/lib/init/crowdsec.sh"
 source "${SCRIPT_DIR}/lib/init/metabase.sh"
+source "${SCRIPT_DIR}/lib/init/grafana.sh"
+source "${SCRIPT_DIR}/lib/init/prometheus.sh"
 source "${SCRIPT_DIR}/lib/init/watchtower.sh"
 source "${SCRIPT_DIR}/lib/init/summary.sh"
 
@@ -102,6 +104,16 @@ init_crowdsec
 # Prepare Metabase layout.
 #
 init_metabase
+
+#
+# Prepare Grafana layout.
+#
+init_grafana
+
+#
+# Prepare Prometheus layout.
+#
+init_prometheus
 
 #
 # Prepare Watchtower layout.
