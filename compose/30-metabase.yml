@@ -96,9 +96,7 @@ services:
 
       MB_DB_PASS: ${METABASE_DB_PASSWORD}
 
-      MB_SITE_URL: ${PUBLIC_ADMIN_URL}/metabase/
-
-      MB_JETTY_CONTEXT_PATH: /metabase
+      MB_SITE_URL: ${METABASE_PUBLIC_URL}
 
       MB_PLUGINS_DIR: /plugins
 
