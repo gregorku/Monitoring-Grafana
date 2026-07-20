@@ -76,12 +76,31 @@ ENV_POLICY[METABASE_DB_PASSWORD]="user"
 ENV_POLICY[WATCHTOWER_VERSION]="framework"
 
 ###############################################################################
+# Grafana
+###############################################################################
+
+ENV_POLICY[GRAFANA_VERSION]="framework"
+ENV_POLICY[GRAFANA_ADMIN_USER]="user"
+ENV_POLICY[GRAFANA_ADMIN_PASSWORD]="user"
+ENV_POLICY[GRAFANA_DOMAIN]="user"
+ENV_POLICY[IP_GRAFANA]="user"
+
+###############################################################################
+# Prometheus
+###############################################################################
+
+ENV_POLICY[PROMETHEUS_VERSION]="framework"
+ENV_POLICY[PROMETHEUS_RETENTION]="user"
+ENV_POLICY[IP_PROMETHEUS]="user"
+
+###############################################################################
 # Static IP addresses
 ###############################################################################
 
 ENV_POLICY[IP_TRAEFIK]="user"
 ENV_POLICY[IP_CROWDSEC]="user"
 ENV_POLICY[IP_METABASE]="user"
+ENV_POLICY[IP_POSTGRES_METABASE]="user"
 
 ENV_POLICY[IP_TRAEFIK_PUBLIC]="user"
 

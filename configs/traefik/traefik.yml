@@ -68,6 +68,18 @@ entryPoints:
 
     address: ":80"
 
+    http:
+
+      redirections:
+
+        entryPoint:
+
+          to: websecure
+
+          scheme: https
+
+          permanent: true
+
   ###########################################################################
   # HTTPS
   ###########################################################################
@@ -83,6 +95,63 @@ entryPoints:
   admin:
 
     address: ":8443"
+
+  ###########################################################################
+  # Metrics (internal Docker network only, not published to the host)
+  ###########################################################################
+
+  metrics:
+
+    address: ":8082"
+
+###############################################################################
+# Certificate Resolvers (Let's Encrypt)
+###############################################################################
+
+certificatesResolvers:
+
+  letsencrypt:
+
+    acme:
+
+      #
+      # NOTE: acme.email is NOT set here because Traefik
+      # does not expand ${VAR} placeholders inside the
+      # static configuration file. It is passed instead
+      # as a CLI flag in compose/10-traefik.yml, where
+      # Docker Compose performs the substitution.
+      #
+
+      storage: /etc/traefik/acme/acme.json
+
+      #
+      # HTTP-01 challenge.
+      #
+      # Works with any DNS provider, including
+      # dynamic DNS services such as serveftp.net,
+      # as long as port 80 is reachable from the
+      # Internet.
+      #
+
+      httpChallenge:
+
+        entryPoint: web
+
+###############################################################################
+# Metrics
+###############################################################################
+
+metrics:
+
+  prometheus:
+
+    entryPoint: metrics
+
+    addEntryPointsLabels: true
+
+    addRoutersLabels: true
+
+    addServicesLabels: true
 
 ###############################################################################
 # Providers
