@@ -62,9 +62,11 @@ http:
         middlewares:
 
           #
-          # Redirect HTTP → HTTPS.
+          # NOTE: HTTP → HTTPS redirect is handled at the
+          # entryPoint level (entryPoints.web.http.redirections
+          # in traefik.yml), not here -- routers using this
+          # chain only listen on "websecure" anyway.
           #
-          - redirect
 
           #
           # Default HTTP headers.

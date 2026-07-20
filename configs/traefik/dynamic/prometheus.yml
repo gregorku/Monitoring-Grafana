@@ -1,0 +1,76 @@
+###############################################################################
+#
+# Monitoring-Grafana Project
+#
+# File:
+#   configs/traefik/dynamic/prometheus.yml
+#
+# Description:
+#   Prometheus router and service.
+#
+#   Internal only -- published on the "admin" entryPoint
+#   (WireGuard wg1) and protected by default-chain
+#   (IP whitelist + BasicAuth), same as the Traefik
+#   dashboard and Metabase.
+#
+###############################################################################
+
+http:
+
+  ###########################################################################
+  # Routers
+  ###########################################################################
+
+  routers:
+
+    #########################################################################
+    # Prometheus
+    #########################################################################
+
+    prometheus:
+
+      entryPoints:
+
+        - admin
+
+      #
+      # Administration URL (through WireGuard)
+      #
+      #   https://<wireguard-ip>:8443/prometheus/
+      #
+
+      rule: >
+        PathPrefix(`/prometheus`) ||
+        PathPrefix(`/prometheus/`)
+
+      service: prometheus
+
+      middlewares:
+
+        - default-chain
+
+      tls:
+
+        options: default
+
+      priority: 100
+
+  ###########################################################################
+  # Services
+  ###########################################################################
+
+  services:
+
+    #########################################################################
+    # Prometheus
+    #########################################################################
+
+    prometheus:
+
+      loadBalancer:
+
+        passHostHeader: true
+
+        servers:
+
+          - url: http://prometheus:9090
