@@ -50,11 +50,16 @@ services:
 
       #
       # Served behind Traefik under /prometheus/
-      # (see configs/traefik/dynamic/prometheus.yml)
+      # (see configs/traefik/dynamic/prometheus.yml).
+      #
+      # Traefik does NOT strip the /prometheus prefix,
+      # so Prometheus itself must know to route under it --
+      # otherwise Prometheus's own router 404s on paths
+      # like /prometheus/graph (it only knows "/", "/graph", ...).
       #
 
-      - --web.route-prefix=/
-      - --web.external-url=/prometheus/
+      - --web.route-prefix=/prometheus/
+      - --web.external-url=${PUBLIC_ADMIN_URL}/prometheus/
 
     ###########################################################################
     # Networks
