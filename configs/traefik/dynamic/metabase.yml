@@ -26,21 +26,17 @@ http:
 
       entryPoints:
 
-        - admin
+        - metabase
 
       #
       # Administration URL
       #
-      #   https://10.100.100.1:9443/metabase/
+      #   https://10.100.100.1:9444/
       #
-      # Internally:
-      #
-      #   https://10.10.10.10:8443/metabase/
+      # (dedicated port -- no subpath, see traefik.yml)
       #
 
-      rule: >
-        PathPrefix(`/metabase`) ||
-        PathPrefix(`/metabase/`)
+      rule: PathPrefix(`/`)
 
       service: metabase
 
@@ -52,7 +48,7 @@ http:
 
         options: default
 
-      priority: 100
+      priority: 1
 
   ###########################################################################
   # Services
