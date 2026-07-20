@@ -97,6 +97,20 @@ entryPoints:
     address: ":8443"
 
   ###########################################################################
+  # Metabase (dedicated port, no subpath)
+  #
+  # Metabase's own asset/site-url handling behind a
+  # reverse-proxy subpath is unreliable (assets get
+  # requested at "/" instead of "/metabase/"). Giving it
+  # its own port at the entryPoint level, serving at "/",
+  # sidesteps that entirely.
+  ###########################################################################
+
+  metabase:
+
+    address: ":8444"
+
+  ###########################################################################
   # Metrics (internal Docker network only, not published to the host)
   ###########################################################################
 
