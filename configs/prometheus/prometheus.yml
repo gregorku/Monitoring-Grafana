@@ -1,0 +1,63 @@
+###############################################################################
+#
+# Monitoring-Grafana Project
+#
+# File:
+#   configs/prometheus/prometheus.yml
+#
+# Description:
+#   Prometheus scrape configuration.
+#
+###############################################################################
+
+global:
+
+  scrape_interval: 15s
+
+  evaluation_interval: 15s
+
+scrape_configs:
+
+  ###########################################################################
+  # Prometheus itself
+  ###########################################################################
+
+  - job_name: prometheus
+
+    static_configs:
+
+      - targets:
+          - localhost:9090
+
+  ###########################################################################
+  # Traefik
+  #
+  # Requires the "metrics" entryPoint (:8082) and
+  # metrics.prometheus block in configs/traefik/traefik.yml
+  # (already enabled).
+  ###########################################################################
+
+  - job_name: traefik
+
+    static_configs:
+
+      - targets:
+          - traefik:8082
+
+  ###########################################################################
+  # CrowdSec
+  #
+  # CrowdSec exposes Prometheus metrics on :6060/metrics
+  # by default. If this target shows as "down", check
+  # that prometheus.enabled / listen_addr in CrowdSec's
+  # config.yaml is set to listen on 0.0.0.0, not 127.0.0.1.
+  ###########################################################################
+
+  - job_name: crowdsec
+
+    metrics_path: /metrics
+
+    static_configs:
+
+      - targets:
+          - crowdsec:6060
