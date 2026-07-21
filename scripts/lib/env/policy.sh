@@ -93,6 +93,7 @@ ENV_POLICY[IP_GRAFANA]="user"
 ENV_POLICY[PROMETHEUS_VERSION]="framework"
 ENV_POLICY[PROMETHEUS_RETENTION]="user"
 ENV_POLICY[IP_PROMETHEUS]="user"
+ENV_POLICY[PROMETHEUS_PUBLIC_URL]="user"
 
 ###############################################################################
 # Static IP addresses
