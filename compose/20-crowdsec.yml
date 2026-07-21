@@ -22,6 +22,11 @@ services:
 
     init: true
 
+    depends_on:
+
+      postgres-crowdsec:
+        condition: service_healthy
+
     networks:
 
       bridge-moje:
@@ -31,6 +36,16 @@ services:
 
       TZ: ${TZ}
 
+      #
+      # Read by ${VAR}-style expansion in
+      # configs/crowdsec/config.yaml.local
+      #
+
+      CROWDSEC_DB_HOST: postgres-crowdsec
+      CROWDSEC_DB_NAME: ${CROWDSEC_DB_NAME}
+      CROWDSEC_DB_USER: ${CROWDSEC_DB_USER}
+      CROWDSEC_DB_PASSWORD: ${CROWDSEC_DB_PASSWORD}
+
     volumes:
 
       #
@@ -39,6 +54,14 @@ services:
 
       - ../configs/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
       - ../configs/crowdsec/profiles.yaml:/etc/crowdsec/profiles.yaml:ro
+
+      #
+      # Overrides db_config to use PostgreSQL instead of
+      # the default SQLite, so alerts/decisions can be
+      # queried from Metabase.
+      #
+
+      - ../configs/crowdsec/config.yaml.local:/etc/crowdsec/config.yaml.local:ro
 
       #
       # Runtime
@@ -65,6 +88,67 @@ services:
 
       interval: 30s
       timeout: 10s
+      retries: 5
+
+    security_opt:
+
+      - no-new-privileges:true
+
+    labels:
+
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  ###########################################################################
+  # PostgreSQL (CrowdSec alerts/decisions backend)
+  #
+  # Also queried directly by Metabase (read-only user,
+  # see configs/crowdsec/init-metabase-readonly.sh) to
+  # build dashboards of bans/alerts.
+  ###########################################################################
+
+  postgres-crowdsec:
+
+    image: postgres:${POSTGRES_VERSION}
+
+    container_name: postgres-crowdsec
+
+    restart: unless-stopped
+
+    networks:
+
+      bridge-moje:
+        ipv4_address: ${IP_POSTGRES_CROWDSEC}
+
+    environment:
+
+      POSTGRES_DB: ${CROWDSEC_DB_NAME}
+
+      POSTGRES_USER: ${CROWDSEC_DB_USER}
+
+      POSTGRES_PASSWORD: ${CROWDSEC_DB_PASSWORD}
+
+      #
+      # Read by init-metabase-readonly.sh on first boot.
+      #
+
+      METABASE_RO_USER: ${METABASE_RO_USER}
+
+      METABASE_RO_PASSWORD: ${METABASE_RO_PASSWORD}
+
+      TZ: ${TZ}
+
+    volumes:
+
+      - ${DATA_DIR}/crowdsec/postgres:/var/lib/postgresql/data
+
+      - ../configs/crowdsec/init-metabase-readonly.sh:/docker-entrypoint-initdb.d/init-metabase-readonly.sh:ro
+
+    healthcheck:
+
+      test: ["CMD-SHELL", "pg_isready -U ${CROWDSEC_DB_USER} -d ${CROWDSEC_DB_NAME}"]
+
+      interval: 10s
+      timeout: 5s
       retries: 5
 
     security_opt:
