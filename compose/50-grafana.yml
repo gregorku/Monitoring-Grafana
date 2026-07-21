@@ -135,7 +135,7 @@ services:
 
       - traefik.http.routers.grafana.tls.certresolver=letsencrypt
 
-      - traefik.http.routers.grafana.middlewares=public-chain
+      - traefik.http.routers.grafana.middlewares=public-chain@file
 
       - traefik.http.services.grafana.loadbalancer.server.port=3000
 
