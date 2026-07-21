@@ -1,0 +1,36 @@
+###############################################################################
+#
+# Monitoring-Grafana Project
+#
+# File:
+#   configs/crowdsec/config.yaml.local
+#
+# Description:
+#   Overrides the default SQLite backend with PostgreSQL,
+#   so alerts/decisions can be queried directly from
+#   Metabase (read-only user, see init-metabase-readonly.sh).
+#
+#   CrowdSec merges *.local files over its base config.yaml
+#   automatically -- this only needs to contain the keys
+#   we're overriding.
+#
+#   ${VAR} placeholders are expanded from the container's
+#   environment (see compose/20-crowdsec.yml).
+#
+###############################################################################
+
+db_config:
+
+  type: postgresql
+
+  host: ${CROWDSEC_DB_HOST}
+
+  port: 5432
+
+  db_name: ${CROWDSEC_DB_NAME}
+
+  user: ${CROWDSEC_DB_USER}
+
+  password: ${CROWDSEC_DB_PASSWORD}
+
+  sslmode: disable
