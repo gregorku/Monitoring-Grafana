@@ -68,7 +68,7 @@ scrape_configs:
   # Node exporter (hardware / OS metriky serveru)
   ###########################################################################
 
-  - job_name: node
+  - job_name: node_server_domaPc
 
     static_configs:
 
@@ -79,7 +79,7 @@ scrape_configs:
   # ZFS exporter
   ###########################################################################
 
-  - job_name: zfs
+  - job_name: zfs_server_domaPc
 
     static_configs:
 
@@ -90,7 +90,7 @@ scrape_configs:
   # Smartctl exporter (S.M.A.R.T. stav disků)
   ###########################################################################
 
-  - job_name: smartctl
+  - job_name: smartctl_server_domaPc
 
     static_configs:
 
