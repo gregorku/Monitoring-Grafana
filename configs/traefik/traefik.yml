@@ -68,6 +68,21 @@ entryPoints:
 
     address: ":80"
 
+    #
+    # HAProxy (running on the VPS host, in front of this
+    # container) forwards traffic here with PROXY protocol
+    # v2 (send-proxy-v2). Without this, Traefik can't parse
+    # incoming connections at all -- including the ACME
+    # HTTP-01 challenge, which is why no certificate was
+    # ever requested.
+    #
+
+    proxyProtocol:
+
+      trustedIPs:
+
+        - "10.10.10.0/24"
+
     http:
 
       redirections:
@@ -87,6 +102,17 @@ entryPoints:
   websecure:
 
     address: ":443"
+
+    #
+    # Same as "web" above -- HAProxy does TCP/SNI
+    # passthrough with send-proxy-v2 for :443 too.
+    #
+
+    proxyProtocol:
+
+      trustedIPs:
+
+        - "10.10.10.0/24"
 
   ###########################################################################
   # Administration (WireGuard only)
