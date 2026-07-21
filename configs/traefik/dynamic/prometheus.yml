@@ -8,10 +8,10 @@
 # Description:
 #   Prometheus router and service.
 #
-#   Internal only -- published on the "admin" entryPoint
-#   (WireGuard wg1) and protected by default-chain
-#   (IP whitelist + BasicAuth), same as the Traefik
-#   dashboard and Metabase.
+#   Internal only -- published on its own dedicated
+#   "prometheus" entryPoint (:8445 / WireGuard wg1) and
+#   protected by default-chain (IP whitelist + BasicAuth),
+#   same as the Traefik dashboard and Metabase.
 #
 ###############################################################################
 
@@ -31,17 +31,17 @@ http:
 
       entryPoints:
 
-        - admin
+        - prometheus
 
       #
-      # Administration URL (through WireGuard)
+      # Administration URL
       #
-      #   https://<wireguard-ip>:8443/prometheus/
+      #   https://10.100.100.1:9445/
+      #
+      # (dedicated port -- no subpath)
       #
 
-      rule: >
-        PathPrefix(`/prometheus`) ||
-        PathPrefix(`/prometheus/`)
+      rule: PathPrefix(`/`)
 
       service: prometheus
 
@@ -53,7 +53,7 @@ http:
 
         options: default
 
-      priority: 100
+      priority: 1
 
   ###########################################################################
   # Services
