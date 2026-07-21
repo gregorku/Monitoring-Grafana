@@ -19,6 +19,7 @@ init_crowdsec()
     ensure_directory "${CROWDSEC_DIR}"
     ensure_directory "${CROWDSEC_DIR}/db"
     ensure_directory "${CROWDSEC_DIR}/data"
+    ensure_directory "${CROWDSEC_DIR}/postgres"
 
     ok "CrowdSec runtime ready."
 }
