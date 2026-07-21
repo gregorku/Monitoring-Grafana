@@ -49,17 +49,12 @@ services:
       - --storage.tsdb.retention.time=${PROMETHEUS_RETENTION}
 
       #
-      # Served behind Traefik under /prometheus/
-      # (see configs/traefik/dynamic/prometheus.yml).
-      #
-      # Traefik does NOT strip the /prometheus prefix,
-      # so Prometheus itself must know to route under it --
-      # otherwise Prometheus's own router 404s on paths
-      # like /prometheus/graph (it only knows "/", "/graph", ...).
+      # Served on its own dedicated Traefik entryPoint
+      # (:8445, see configs/traefik/dynamic/prometheus.yml)
+      # -- no subpath, so no route-prefix needed.
       #
 
-      - --web.route-prefix=/prometheus/
-      - --web.external-url=${PUBLIC_ADMIN_URL}/prometheus/
+      - --web.external-url=${PROMETHEUS_PUBLIC_URL}
 
     ###########################################################################
     # Networks
