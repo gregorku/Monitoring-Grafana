@@ -24,6 +24,8 @@ scrape_configs:
 
   - job_name: prometheus
 
+    metrics_path: /prometheus/metrics
+
     static_configs:
 
       - targets:
@@ -61,3 +63,57 @@ scrape_configs:
 
       - targets:
           - crowdsec:6060
+
+  ###########################################################################
+  # Node exporter (hardware / OS metriky serveru)
+  ###########################################################################
+
+  - job_name: node
+
+    static_configs:
+
+      - targets:
+          - 10.100.100.100:9100
+
+  ###########################################################################
+  # ZFS exporter
+  ###########################################################################
+
+  - job_name: zfs
+
+    static_configs:
+
+      - targets:
+          - 10.100.100.100:9134
+
+  ###########################################################################
+  # Smartctl exporter (S.M.A.R.T. stav disků)
+  ###########################################################################
+
+  - job_name: smartctl
+
+    static_configs:
+
+      - targets:
+          - 10.100.100.100:9633
+
+  ###########################################################################
+  # Přidávání dalších serverů/služeb ke sledování
+  #
+  # Zkopíruj tenhle vzor a uprav job_name + cíl:
+  #
+  #   - job_name: nazev-sluzby
+  #
+  #     static_configs:
+  #
+  #       - targets:
+  #           - jmeno-kontejneru:port    # pokud je na stejné síti (bridge-moje / traefik-moje)
+  #           - 192.168.1.50:9100        # nebo IP adresa/port, pokud je to mimo Docker (třeba node_exporter na jiném stroji)
+  #
+  # metrics_path je potřeba jen pokud služba neexpozuje
+  # metriky na výchozí cestě "/metrics".
+  #
+  # Po úpravě: ./scripts/deploy.sh (recreatne Prometheus,
+  # ten si config znovu načte), nebo jen
+  # "docker exec prometheus kill -HUP 1" pro reload bez restartu.
+  ###########################################################################
