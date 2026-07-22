@@ -96,6 +96,39 @@ scrape_configs:
           - 10.100.100.100:9633
 
   ###########################################################################
+  # Node exporter (hardware / OS metriky serveru)
+  ###########################################################################
+
+  - job_name: node_testServer_pracePc
+
+    static_configs:
+
+      - targets:
+          - 10.100.100.5:9100
+
+  ###########################################################################
+  # ZFS exporter
+  ###########################################################################
+
+  - job_name: zfs_testServer_pracePc
+
+    static_configs:
+
+      - targets:
+          - 10.100.100.5:9134
+
+  ###########################################################################
+  # Smartctl exporter (S.M.A.R.T. stav disků)
+  ###########################################################################
+
+  - job_name: smartctl_testServer_pracePc
+
+    static_configs:
+
+      - targets:
+          - 10.100.100.5:9633
+
+  ###########################################################################
   # MikroTik / SNMP zařízení (přes snmp_exporter)
   #
   # Funguje jinak než ostatní joby -- "targets" jsou tady
