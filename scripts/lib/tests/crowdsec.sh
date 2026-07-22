@@ -59,9 +59,32 @@ test_crowdsec()
     #
     # Access log acquisition
     #
+    # Right after a restart, CrowdSec's file tailer starts
+    # reading from the END of access.log -- it has nothing
+    # to report until at least one new request comes in.
+    # Generate one ourselves so the check isn't racy.
+    #
 
-    if docker exec crowdsec cscli metrics \
-        | grep -q "file:/logs/access.log"
+    docker exec traefik \
+        wget --no-check-certificate -q -O /dev/null \
+        "https://127.0.0.1:8443/dashboard/" \
+        2>/dev/null || true
+
+    acquisition_ok=false
+
+    for _ in 1 2 3 4 5 6 7 8 9 10
+    do
+        if docker exec crowdsec cscli metrics \
+            | grep -q "file:/logs/access.log"
+        then
+            acquisition_ok=true
+            break
+        fi
+
+        sleep 1
+    done
+
+    if [ "${acquisition_ok}" = true ]
     then
         ok "Access log acquisition OK."
     else
