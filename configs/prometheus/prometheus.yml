@@ -116,7 +116,7 @@ scrape_configs:
     metrics_path: /snmp
 
     params:
-      module: [if_mib]
+      module: [mikrotik]
 
     relabel_configs:
 
