@@ -1,0 +1,58 @@
+###############################################################################
+#
+# Monitoring-Grafana Project
+#
+# File:
+#   compose/70-snmp-exporter.yml
+#
+# Description:
+#   snmp_exporter -- lets Prometheus scrape SNMP devices
+#   (MikroTik routers/switches, etc.) via the standard
+#   multi-target exporter pattern.
+#
+#   Uses the official image's BUILT-IN default snmp.yml
+#   (community "public", includes the "if_mib" module,
+#   which works against any standards-compliant SNMP
+#   device). Not mounting a custom config on purpose --
+#   the bundled one is generated and tested upstream;
+#   hand-rolled OID configs are easy to get subtly wrong.
+#
+#   Internal only -- not routed through Traefik. Prometheus
+#   reaches it directly by container name.
+#
+###############################################################################
+
+services:
+
+  snmp-exporter:
+
+    image: prom/snmp-exporter:${SNMP_EXPORTER_VERSION}
+
+    container_name: snmp-exporter
+
+    hostname: snmp-exporter
+
+    restart: unless-stopped
+
+    security_opt:
+
+      - no-new-privileges:true
+
+    networks:
+
+      bridge-moje:
+        ipv4_address: ${IP_SNMP_EXPORTER}
+
+    labels:
+
+      - "com.centurylinklabs.watchtower.enable=true"
+
+    logging:
+
+      driver: json-file
+
+      options:
+
+        max-size: ${LOG_MAX_SIZE}
+
+        max-file: "${LOG_MAX_FILES}"
