@@ -49,6 +49,9 @@ env_read_example()
     env_read_file \
         "${STACK_DIR}/.env.example" \
         "${array_name}"
+
+    log_info "Loaded SNMP_EXPORTER_VERSION: ${ENV_EXAMPLE[SNMP_EXPORTER_VERSION]}"
+    log_info "Loaded IP_SNMP_EXPORTER: ${ENV_EXAMPLE[IP_SNMP_EXPORTER]}"
 }
 
 ###############################################################################

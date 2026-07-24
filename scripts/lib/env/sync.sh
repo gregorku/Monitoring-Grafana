@@ -53,6 +53,9 @@ env_sync()
     env_read_current ENV_CURRENT
     env_read_example ENV_EXAMPLE
 
+    log_info "Current SNMP_EXPORTER_VERSION: ${ENV_CURRENT[SNMP_EXPORTER_VERSION]}"
+    log_info "Current IP_SNMP_EXPORTER: ${ENV_CURRENT[IP_SNMP_EXPORTER]}"
+
     local output=""
     local line
     local key
@@ -141,6 +144,10 @@ env_sync()
             printf "       Keeping user value.\n\n"
 
             ((differences++))
+        fi
+
+        if [[ "${key}" == "SNMP_EXPORTER_VERSION" || "${key}" == "IP_SNMP_EXPORTER" ]]; then
+            log_info "Synchronizing ${key} with value: ${value}"
         fi
 
         output+="${key}=${value}"$'\n'

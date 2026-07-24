@@ -57,6 +57,9 @@ env_write_file()
 
     cat > "${ENV_TMP_FILE}"
 
+    log_info "Writing SNMP_EXPORTER_VERSION: $(grep 'SNMP_EXPORTER_VERSION' "${ENV_TMP_FILE}")"
+    log_info "Writing IP_SNMP_EXPORTER: $(grep 'IP_SNMP_EXPORTER' "${ENV_TMP_FILE}")"
+
     mv "${ENV_TMP_FILE}" "${ENV_FILE}"
 
     ok ".env written."
