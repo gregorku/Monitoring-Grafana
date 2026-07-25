@@ -139,14 +139,29 @@ scrape_configs:
 
     static_configs:
       - targets:
-          - 10.100.100.100
+          - 10.100.100.5
         labels:
-          name: "Mikrotik_doma"
+          name: "Mikrotik_test_prace"
 
       - targets:
           - 10.100.100.12
         labels:
           name: "Mikrotik_prace"
+
+      - targets:
+          - 10.100.100.100
+        labels:
+          name: "Mikrotik_doma"
+
+      - targets:
+          - 10.100.100.200
+        labels:
+          name: "Mikrotik_Udlice"
+
+      - targets:
+          - 10.100.100.220
+        labels:
+          name: "Mikrotik_jirkov_ubytovna"
 
     metrics_path: /snmp
 
