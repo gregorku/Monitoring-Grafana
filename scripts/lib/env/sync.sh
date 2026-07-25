@@ -140,7 +140,19 @@ env_sync()
             printf "       .env.example : %s\n" "${example_value}"
             printf "       Keeping user value.\n\n"
 
-            ((differences++))
+            #
+            # NOTE: NOT "((differences++))" -- under "set -e",
+            # a post-increment arithmetic expression returns
+            # the PRE-increment value as its exit status. Going
+            # from 0 to 1 evaluates to 0 ("false"), which makes
+            # the whole script exit right here on the very
+            # first difference found -- silently truncating
+            # everything after it in the loop (this is exactly
+            # what was happening: .env stopped being updated
+            # right after the first differing variable).
+            #
+
+            differences=$((differences + 1))
         fi
 
         output+="${key}=${value}"$'\n'
