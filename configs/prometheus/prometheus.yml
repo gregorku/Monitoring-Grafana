@@ -179,6 +179,28 @@ scrape_configs:
         replacement: snmp-exporter:9116
 
   ###########################################################################
+  # Cisco switch / SNMP zařízení (přes snmp_exporter)
+  ###########################################################################
+  - job_name: 'cisco_switch'
+    scrape_interval: 30s
+    scrape_timeout: 15s
+    static_configs:
+      - targets:
+          - 10.100.100.220:1161       # Zde specifikujeme port 1161
+        labels:
+          name: 'Cisco_Switch_3560'
+    metrics_path: /snmp
+    params:
+      module: [if_mib]              # Standardní MIB modul pro Cisco/switche
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9116  # IP a port tvého snmp_exporteru
+
+  ###########################################################################
   # Přidávání dalších serverů/služeb ke sledování
   #
   # Zkopíruj tenhle vzor a uprav job_name + cíl:
