@@ -130,21 +130,23 @@ scrape_configs:
 
   ###########################################################################
   # MikroTik / SNMP zařízení (přes snmp_exporter)
-  #
-  # Funguje jinak než ostatní joby -- "targets" jsou tady
-  # SNMP zařízení (MikroTiky), ne snmp_exporter samotný.
-  # Prometheus se zeptá snmp_exporteru a řekne mu přes
-  # parametr "target", na koho se má SNMP dotázat.
-  #
-  # Přidání dalšího MikroTiku = jen nový řádek do targets.
   ###########################################################################
 
   - job_name: mikrotik
 
+    # SNMP dotazy trvají déle, prodloužíme časový limit na 15 sekund
+    scrape_timeout: 15s
+
     static_configs:
+      - targets:
+          - 10.100.100.100
+        labels:
+          name: "Mikrotik_doma"
 
       - targets:
-          - 10.100.100.1     # IP MikroTiku (uprav/přidej další)
+          - 10.100.100.12
+        labels:
+          name: "Mikrotik_prace"
 
     metrics_path: /snmp
 
@@ -152,7 +154,6 @@ scrape_configs:
       module: [mikrotik]
 
     relabel_configs:
-
       - source_labels: [__address__]
         target_label: __param_target
 
@@ -160,7 +161,7 @@ scrape_configs:
         target_label: instance
 
       - target_label: __address__
-        replacement: snmp-exporter:9116   # snmp_exporter samotný
+        replacement: snmp-exporter:9116
 
   ###########################################################################
   # Přidávání dalších serverů/služeb ke sledování
