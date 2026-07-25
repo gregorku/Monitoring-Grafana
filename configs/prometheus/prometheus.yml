@@ -186,19 +186,14 @@ scrape_configs:
     scrape_timeout: 15s
     static_configs:
       - targets:
-          - 10.100.100.220            # ZDE POUZE ČISTÁ IP (BEZ :1161)
+          - 10.100.100.220:1161       # Cílová IP s portem 1161
         labels:
           name: 'Cisco_Switch_3560'
     metrics_path: /snmp
     params:
-      module: [if_mib]              # Standardní MIB modul
+      module: [if_mib]              # Standardní MIB modul pro Cisco
     relabel_configs:
       - source_labels: [__address__]
-        target_label: __param_target
-      # Zde vnutíme exporteru cílový UDP port 1161 pro Cisco
-      - source_labels: [__param_target]
-        regex: (.*)
-        replacement: ${1}:1161
         target_label: __param_target
       - source_labels: [__param_target]
         target_label: instance
