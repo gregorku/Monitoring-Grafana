@@ -280,7 +280,7 @@ check_modules() {
 
         log_ok "$(basename "$file")"
 
-        ((count++))
+        ((++count))
 
     done < <(
         find "$MODULE_DIR" \
