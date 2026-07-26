@@ -258,7 +258,7 @@ list_modules() {
 
         }
 
-        inmodules && /^[[:space:]]+[A-Za-z0-9_]+:/ {
+        inmodules && /^[[:space:]][[:space:]][A-Za-z0-9_]+:/ {
 
             line=$0
 
