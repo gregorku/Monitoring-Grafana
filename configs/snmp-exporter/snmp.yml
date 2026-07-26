@@ -4583,3 +4583,59 @@ modules:
         indexes:
           - labelname: group
             type: gauge
+
+      #
+      # ---------------------------------------------------------------------
+      # Cisco PoE Port Status
+      # ---------------------------------------------------------------------
+      #
+
+      - name: cisco_poe_admin_enable
+        oid: 1.3.6.1.2.1.105.1.1.1.3
+        type: gauge
+
+        indexes:
+          - labelname: group
+            type: gauge
+          - labelname: port
+            type: gauge
+
+      - name: cisco_poe_detection_status
+        oid: 1.3.6.1.2.1.105.1.1.1.4
+        type: gauge
+
+        indexes:
+          - labelname: group
+            type: gauge
+          - labelname: port
+            type: gauge
+
+      - name: cisco_poe_priority
+        oid: 1.3.6.1.2.1.105.1.1.1.5
+        type: gauge
+
+        indexes:
+          - labelname: group
+            type: gauge
+          - labelname: port
+            type: gauge
+
+      - name: cisco_poe_class
+        oid: 1.3.6.1.2.1.105.1.1.1.6
+        type: gauge
+
+        indexes:
+          - labelname: group
+            type: gauge
+          - labelname: port
+            type: gauge
+
+      - name: cisco_poe_power_pairs
+        oid: 1.3.6.1.2.1.105.1.1.1.7
+        type: gauge
+
+        indexes:
+          - labelname: group
+            type: gauge
+          - labelname: port
+            type: gauge            
