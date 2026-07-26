@@ -1,27 +1,10 @@
-# ==============================================================================
-# Cisco Power over Ethernet
-# ==============================================================================
-#
-# POWER-ETHERNET-MIB
-#
-# Modul obsahuje:
-#
-#   ✔ Celkový PoE budget
-#
-#   ✔ Aktuální spotřebu
-#
-#   ✔ Volný výkon
-#
-#   ✔ Stav PoE portů
-#
-#   ✔ Prioritu portů
-#
-#   ✔ Detekci PD
-#
-#   ✔ Spotřebu jednotlivých portů
-#
-# Testováno:
-#
-#   Catalyst 3560
-#
-# ==============================================================================
+modules:
+
+  cisco_poe:
+
+    walk:
+
+      #
+      # POWER-ETHERNET-MIB
+      #
+      - 1.3.6.1.2.1.105
