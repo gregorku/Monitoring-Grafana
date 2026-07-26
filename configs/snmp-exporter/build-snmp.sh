@@ -333,6 +333,10 @@ list_modules() {
 build() {
 
     TMP_FILE="$(mktemp "${SCRIPT_DIR}/snmp.yml.tmp.XXXXXX")"
+    echo "SCRIPT_DIR = $SCRIPT_DIR"
+    echo "MODULE_DIR = $MODULE_DIR"
+    echo "OUTPUT_FILE = $OUTPUT_FILE"
+    echo "TMP_FILE = $TMP_FILE"
 
     log_info "Generuji snmp.yml"
 
@@ -442,6 +446,11 @@ EOF
     ###########################################################################
     # Install
     ###########################################################################
+    echo "TMP_FILE size:"
+    ls -lh "${TMP_FILE}"
+
+    echo "OUTPUT_FILE:"
+    echo "${OUTPUT_FILE}"
 
     mv "${TMP_FILE}" "${OUTPUT_FILE}"
 
