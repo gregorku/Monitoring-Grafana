@@ -141,6 +141,17 @@ require_directory() {
 }
 
 ###############################################################################
+# Check generated file
+###############################################################################
+
+check_generated_file() {
+
+    [[ -s "${GENERATED_FILE}" ]] \
+        || die "Generated snmp.yml je prázdný."
+
+}
+
+###############################################################################
 # Banner
 ###############################################################################
 
@@ -349,6 +360,9 @@ EOF
 
     ' "${GENERATED_FILE}" >> "${output}"
 
+    [[ -s "${output}" ]] \
+        || die "Nepodařilo se vytvořit ${output}"
+
     log_ok "$(basename "${output}")"
 
 }
@@ -359,6 +373,12 @@ EOF
 
 split_modules() {
 
+    find "${MODULE_DIR}" \
+        -maxdepth 1 \
+        -type f \
+        -name "*.yml" \
+        -delete
+
     log_info "Rozděluji moduly"
 
     local count=0
@@ -368,7 +388,8 @@ split_modules() {
 
         [[ -n "${module}" ]] || continue
 
-        extract_module "${module}"
+        extract_module "${module}" \
+            || die "Chyba při vytváření ${module}"
 
         ((++count))
 
@@ -479,17 +500,6 @@ main() {
             ;;
 
     esac
-
-}
-
-###############################################################################
-# Check generated file
-###############################################################################
-
-check_generated_file() {
-
-    [[ -s "${GENERATED_FILE}" ]] \
-        || die "Generated snmp.yml je prázdný."
 
 }
 
