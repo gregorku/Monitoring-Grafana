@@ -435,7 +435,10 @@ EOF
         {
             print
         }
+
         ' "$file" >> "${TMP_FILE}"
+
+        printf "\n" >> "${TMP_FILE}"
 
     done < <(
 
