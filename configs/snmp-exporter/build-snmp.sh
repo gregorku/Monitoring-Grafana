@@ -24,7 +24,7 @@ readonly MODULE_DIR="${SCRIPT_DIR}/modules"
 
 readonly OUTPUT_FILE="${SCRIPT_DIR}/snmp.yml"
 
-readonly TMP_FILE="$(mktemp "${SCRIPT_DIR}/snmp.yml.tmp.XXXXXX")"
+readonly TMP_FILE=""
 
 ###############################################################################
 # Colours
@@ -54,6 +54,8 @@ fi
 ###############################################################################
 
 cleanup() {
+
+    [[ -n "${TMP_FILE}" ]] || return
 
     [[ -f "${TMP_FILE}" ]] && rm -f "${TMP_FILE}"
 
@@ -361,6 +363,8 @@ list_modules() {
 
 build() {
 
+    TMP_FILE="$(mktemp "${SCRIPT_DIR}/snmp.yml.tmp.XXXXXX")"
+
     log_info "Generuji snmp.yml"
 
     ###########################################################################
@@ -374,7 +378,7 @@ build() {
 #
 # Monitoring-Grafana
 #
-# Generated: $(date '+%Y-%m-%d %H:%M:%S')
+# Generated: $(date -u '+%Y-%m-%dT%H:%M:%SZ')
 #
 # Tento soubor je generován pomocí:
 #
