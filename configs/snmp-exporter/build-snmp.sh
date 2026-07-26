@@ -1,311 +1,578 @@
 #!/usr/bin/env bash
-
+#
 ###############################################################################
 #
 # Monitoring-Grafana
 #
-# SNMP Exporter Builder v2.0
+# SNMP Exporter Builder
+#
+# Version : 1.1
 #
 ###############################################################################
 
 set -Eeuo pipefail
 
-VERSION="2.0"
-
 ###############################################################################
-# Paths
+# Configuration
 ###############################################################################
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly VERSION="1.1"
 
-MODULE_DIR="${SCRIPT_DIR}/modules"
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-OUTPUT_FILE="${SCRIPT_DIR}/snmp.yml"
+readonly MODULE_DIR="${SCRIPT_DIR}/modules"
 
-BACKUP_FILE="${SCRIPT_DIR}/snmp.yml.bak"
+readonly OUTPUT_FILE="${SCRIPT_DIR}/snmp.yml"
 
-###############################################################################
-# Options
-###############################################################################
-
-CHECK_ONLY=false
-VERBOSE=false
-RESTART=false
+readonly TMP_FILE="$(mktemp "${SCRIPT_DIR}/snmp.yml.tmp.XXXXXX")"
 
 ###############################################################################
-# Colors
+# Colours
 ###############################################################################
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+if [[ -t 1 ]] && command -v tput >/dev/null 2>&1
+then
+
+    CLR_RED="$(tput setaf 1)"
+    CLR_GREEN="$(tput setaf 2)"
+    CLR_YELLOW="$(tput setaf 3)"
+    CLR_BLUE="$(tput setaf 4)"
+    CLR_RESET="$(tput sgr0)"
+
+else
+
+    CLR_RED=""
+    CLR_GREEN=""
+    CLR_YELLOW=""
+    CLR_BLUE=""
+    CLR_RESET=""
+
+fi
 
 ###############################################################################
-# Functions
+# Cleanup
 ###############################################################################
 
-info() {
+cleanup() {
 
-    echo -e "${BLUE}==>${NC} $1"
+    [[ -f "${TMP_FILE}" ]] && rm -f "${TMP_FILE}"
 
 }
 
-ok() {
+trap cleanup EXIT
 
-    echo -e "${GREEN}✔${NC} $1"
+###############################################################################
+# Logging
+###############################################################################
+
+log_info() {
+
+    printf "%s==>%s %s\n" \
+        "${CLR_BLUE}" \
+        "${CLR_RESET}" \
+        "$1"
 
 }
 
-warn() {
+log_ok() {
 
-    echo -e "${YELLOW}⚠${NC} $1"
+    printf "%s✔%s %s\n" \
+        "${CLR_GREEN}" \
+        "${CLR_RESET}" \
+        "$1"
 
 }
 
-fail() {
+log_warn() {
 
-    echo -e "${RED}✖${NC} $1"
+    printf "%s⚠%s %s\n" \
+        "${CLR_YELLOW}" \
+        "${CLR_RESET}" \
+        "$1"
+
+}
+
+log_error() {
+
+    printf "%s✖%s %s\n" \
+        "${CLR_RED}" \
+        "${CLR_RESET}" \
+        "$1" >&2
+
+}
+
+die() {
+
+    log_error "$1"
 
     exit 1
 
 }
 
-usage() {
+###############################################################################
+# Banner
+###############################################################################
+
+print_banner() {
 
 cat <<EOF
 
-Monitoring-Grafana
+==============================================================
 
-SNMP Exporter Builder ${VERSION}
+ Monitoring-Grafana
+
+ SNMP Exporter Builder ${VERSION}
+
+==============================================================
+
+EOF
+
+}
+
+###############################################################################
+# Help
+###############################################################################
+
+usage() {
+
+cat <<EOF
 
 Použití
 
     ./build-snmp.sh
 
+nebo
+
+    ./build-snmp.sh --build
+
 Volby
+
+    --build
+
+        vytvoří nový snmp.yml
 
     --check
 
-        pouze kontrola konfigurace
+        zkontroluje moduly
 
-    --restart
+    --list
 
-        restart snmp-exporter po úspěšném buildu
-
-    --verbose
-
-        podrobný výpis
+        vypíše nalezené moduly
 
     --help
 
-        tato nápověda
+        zobrazí tuto nápovědu
 
 EOF
-
-exit 0
 
 }
 
 ###############################################################################
-# Parse arguments
+# Helpers
 ###############################################################################
 
-while [[ $# -gt 0 ]]
-do
+require_directory() {
 
-    case "$1" in
+    [[ -d "$1" ]] || die "Adresář neexistuje: $1"
 
-        --check)
+}
 
-            CHECK_ONLY=true
+require_file() {
 
-            ;;
+    [[ -f "$1" ]] || die "Soubor neexistuje: $1"
 
-        --restart)
+}
 
-            RESTART=true
+require_not_empty() {
 
-            ;;
+    [[ -s "$1" ]] || die "Soubor je prázdný: $(basename "$1")"
 
-        --verbose)
-
-            VERBOSE=true
-
-            ;;
-
-        --help|-h)
-
-            usage
-
-            ;;
-
-        *)
-
-            fail "Neznámý parametr: $1"
-
-            ;;
-
-    esac
-
-    shift
-
-done
+}
 
 ###############################################################################
-# Checks
+# Validation
 ###############################################################################
-
-[[ -d "${MODULE_DIR}" ]] || fail "Adresář modules neexistuje."
-
-###############################################################################
-# Banner
-###############################################################################
-
-echo
-
-echo "============================================================"
-
-echo " Monitoring-Grafana"
-
-echo " SNMP Exporter Builder ${VERSION}"
-
-echo "============================================================"
-
-echo
-
-###############################################################################
-# Scan modules
-###############################################################################
-
-info "Kontrola modulů"
-
-COUNT=0
 
 declare -A MODULE_NAMES
 
-for file in "${MODULE_DIR}"/*.yml
-do
+###############################################################################
+# Return module name
+###############################################################################
 
-    [[ -f "$file" ]] || continue
+get_module_name() {
 
-    [[ -s "$file" ]] || fail "$(basename "$file") je prázdný."
+    local file="$1"
 
-    name=$(grep '^  [a-zA-Z0-9_-]\+:' "$file" | head -1 | sed 's/://')
+    awk '
 
-    if [[ -n "$name" ]]
+        /^modules:/ {
+
+            inmodules=1
+
+            next
+
+        }
+
+        inmodules && /^[[:space:]]{2}[A-Za-z0-9_-]+:/ {
+
+            gsub(":","")
+            gsub(" ","")
+
+            print
+
+            exit
+
+        }
+
+    ' "$file"
+
+}
+
+###############################################################################
+# Check one module
+###############################################################################
+
+check_module() {
+
+    local file="$1"
+
+    require_file "$file"
+
+    require_not_empty "$file"
+
+    grep -q '^modules:' "$file" \
+        || die "$(basename "$file"): chybí sekce modules:"
+
+    local count
+
+    count=$(
+        awk '
+
+            /^modules:/ {
+
+                inmodules=1
+
+                next
+
+            }
+
+            inmodules && /^[[:space:]]{2}[A-Za-z0-9_-]+:/ {
+
+                c++
+
+            }
+
+            END {
+
+                print c+0
+
+            }
+
+        ' "$file"
+    )
+
+    [[ "$count" == "1" ]] \
+        || die "$(basename "$file"): musí obsahovat právě jeden modul."
+
+    local module
+
+    module="$(get_module_name "$file")"
+
+    [[ -n "$module" ]] \
+        || die "$(basename "$file"): nelze zjistit název modulu."
+
+    if [[ -n "${MODULE_NAMES[$module]:-}" ]]
     then
 
-        if [[ -n "${MODULE_NAMES[$name]:-}" ]]
-        then
-
-            fail "Duplicitní modul: ${name}"
-
-        fi
-
-        MODULE_NAMES[$name]=1
+        die "Duplicitní modul: ${module}"
 
     fi
 
-    ((COUNT++))
+    MODULE_NAMES["$module"]=1
 
-    if $VERBOSE
-    then
-
-        ok "$(basename "$file")"
-
-    fi
-
-done
-
-[[ "$COUNT" -gt 0 ]] || fail "Nenalezen žádný modul."
-
-ok "Počet modulů: ${COUNT}"
+}
 
 ###############################################################################
-# Check only
+# Check all modules
 ###############################################################################
 
-if $CHECK_ONLY
-then
+check_modules() {
 
-    ok "Kontrola dokončena."
+    require_directory "$MODULE_DIR"
 
-    exit 0
+    local count=0
 
-fi
+    while IFS= read -r -d '' file
+    do
+
+        check_module "$file"
+
+        log_ok "$(basename "$file")"
+
+        ((count++))
+
+    done < <(
+        find "$MODULE_DIR" \
+            -maxdepth 1 \
+            -type f \
+            -name "*.yml" \
+            -print0 | sort -z
+    )
+
+    ((count>0)) \
+        || die "Adresář modules je prázdný."
+
+}
 
 ###############################################################################
-# Backup
+# List modules
 ###############################################################################
 
-if [[ -f "$OUTPUT_FILE" ]]
-then
+list_modules() {
 
-    cp "$OUTPUT_FILE" "$BACKUP_FILE"
+    printf "\n"
 
-    ok "Vytvořena záloha snmp.yml"
+    printf "Moduly\n"
 
-fi
+    printf "--------------------------------------------------\n"
+
+    while IFS= read -r -d '' file
+    do
+
+        printf " %-25s %s\n" \
+            "$(basename "$file")" \
+            "$(get_module_name "$file")"
+
+    done < <(
+        find "$MODULE_DIR" \
+            -maxdepth 1 \
+            -type f \
+            -name "*.yml" \
+            -print0 | sort -z
+    )
+
+    printf "\n"
+
+}
 
 ###############################################################################
 # Build
 ###############################################################################
 
-info "Generuji snmp.yml"
+build() {
 
-cat > "$OUTPUT_FILE" <<EOF
+    log_info "Generuji snmp.yml"
+
+    ###########################################################################
+    # Header
+    ###########################################################################
+
+    cat > "${TMP_FILE}" <<EOF
 ###############################################################################
 #
 # AUTO GENERATED FILE
 #
-# Generated by build-snmp.sh
+# Monitoring-Grafana
 #
-# DO NOT EDIT
+# Generated: $(date '+%Y-%m-%d %H:%M:%S')
+#
+# Tento soubor je generován pomocí:
+#
+#     build-snmp.sh
+#
+# Neupravujte jej ručně.
 #
 ###############################################################################
+
+modules:
 
 EOF
 
-for file in "${MODULE_DIR}"/*.yml
-do
+    ###########################################################################
+    # Merge modules
+    ###########################################################################
 
-    echo >> "$OUTPUT_FILE"
+    while IFS= read -r -d '' file
+    do
 
-    echo "# ------------------------------------------------------------------" >> "$OUTPUT_FILE"
+        printf "\n" >> "${TMP_FILE}"
 
-    echo "# $(basename "$file")" >> "$OUTPUT_FILE"
+        printf "# ------------------------------------------------------------------\n" >> "${TMP_FILE}"
+        printf "# %s\n" "$(basename "$file")" >> "${TMP_FILE}"
+        printf "# ------------------------------------------------------------------\n\n" >> "${TMP_FILE}"
 
-    echo "# ------------------------------------------------------------------" >> "$OUTPUT_FILE"
+        #
+        # Přeskočí pouze první výskyt "modules:"
+        #
+        awk '
 
-    cat "$file" >> "$OUTPUT_FILE"
+            BEGIN {
 
-    echo >> "$OUTPUT_FILE"
+                skip = 1
 
-done
+            }
 
-ok "snmp.yml vytvořen."
+            skip && /^modules:[[:space:]]*$/ {
+
+                skip = 0
+
+                next
+
+            }
+
+            {
+
+                print
+
+            }
+
+        ' "$file" >> "${TMP_FILE}"
+
+        printf "\n" >> "${TMP_FILE}"
+
+    done < <(
+
+        find "$MODULE_DIR" \
+            -maxdepth 1 \
+            -type f \
+            -name "*.yml" \
+            -print0 | sort -z
+
+    )
+
+    ###########################################################################
+    # Compare
+    ###########################################################################
+
+    if [[ -f "${OUTPUT_FILE}" ]]
+    then
+
+        if cmp -s "${TMP_FILE}" "${OUTPUT_FILE}"
+        then
+
+            rm -f "${TMP_FILE}"
+
+            log_ok "snmp.yml beze změny."
+
+            return 0
+
+        fi
+
+    fi
+
+    ###########################################################################
+    # Install
+    ###########################################################################
+
+    mv "${TMP_FILE}" "${OUTPUT_FILE}"
+
+    log_ok "Vytvořen ${OUTPUT_FILE}"
+
+}
 
 ###############################################################################
-# Restart
+# Summary
 ###############################################################################
 
-if $RESTART
-then
+summary() {
 
-    info "Restartuji snmp-exporter"
+    printf "\n"
 
-    docker compose restart snmp-exporter
+    printf "--------------------------------------------------------------\n"
 
-fi
+    printf " Moduly : %s\n" "${#MODULE_NAMES[@]}"
+
+    printf " Výstup : %s\n" "${OUTPUT_FILE}"
+
+    printf "--------------------------------------------------------------\n"
+
+    printf "\n"
+
+}
 
 ###############################################################################
-# Done
+# Main
 ###############################################################################
 
-echo
+main() {
 
-ok "Hotovo."
+    local action="${1:---build}"
 
-echo
+    require_directory "${MODULE_DIR}"
+
+    if [[ -t 1 ]]
+    then
+
+        print_banner
+
+    fi
+
+    case "${action}" in
+
+        --help|-h)
+
+            usage
+
+            exit 0
+
+            ;;
+
+        --list)
+
+            check_modules
+
+            list_modules
+
+            exit 0
+
+            ;;
+
+        --check)
+
+            log_info "Kontroluji moduly"
+
+            check_modules
+
+            printf "\n"
+
+            log_ok "Kontrola dokončena."
+
+            summary
+
+            exit 0
+
+            ;;
+
+        --build|build)
+
+            log_info "Kontroluji moduly"
+
+            check_modules
+
+            printf "\n"
+
+            build
+
+            summary
+
+            log_ok "Hotovo."
+
+            exit 0
+
+            ;;
+
+        *)
+
+            die "Neznámá volba: ${action}"
+
+            ;;
+
+    esac
+
+}
+
+###############################################################################
+# Start
+###############################################################################
+
+main "$@"
