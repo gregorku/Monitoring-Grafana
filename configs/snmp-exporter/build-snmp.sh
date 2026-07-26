@@ -453,10 +453,8 @@ EOF
 
     if [[ -d "${STACK_DIR}" ]]
     then
-        cp -vf "${OUTPUT_FILE}" "${STACK_FILE}"
+        install -m 0644 "${OUTPUT_FILE}" "${STACK_FILE}"
         log_ok "Aktualizován ${STACK_FILE}"
-    else
-        echo "DEBUG: STACK_DIR neexistuje!"
     fi
 
 }
