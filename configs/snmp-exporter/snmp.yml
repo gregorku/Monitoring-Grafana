@@ -4458,6 +4458,7 @@ modules:
       - 1.3.6.1.2.1.1.3.0
 
       metrics:
+
       - name: sysDescr
         oid: 1.3.6.1.2.1.1.1
         type: DisplayString
@@ -4487,3 +4488,42 @@ modules:
         oid: 1.3.6.1.4.1.9.2.1.58.0
         type: gauge
         help: Cisco CPU utilization over the last 5 minutes
+
+      #
+      # ---------------------------------------------------------------------
+      # Cisco CPU
+      # ---------------------------------------------------------------------
+      #
+
+      - name: cisco_cpu_5s
+        oid: 1.3.6.1.4.1.9.2.1.56.0
+        type: gauge
+        help: Cisco CPU utilization during the last 5 seconds
+
+      - name: cisco_cpu_1m
+        oid: 1.3.6.1.4.1.9.2.1.57.0
+        type: gauge
+        help: Cisco CPU utilization during the last 1 minute
+
+      - name: cisco_cpu_5m
+        oid: 1.3.6.1.4.1.9.2.1.58.0
+        type: gauge
+        help: Cisco CPU utilization during the last 5 minutes
+
+      #
+      # ---------------------------------------------------------------------
+      # Cisco Memory Pool
+      # ---------------------------------------------------------------------
+      #
+
+      - name: cisco_memory_used_bytes
+        oid: 1.3.6.1.4.1.9.9.48.1.1.1.5
+        type: gauge
+
+      - name: cisco_memory_free_bytes
+        oid: 1.3.6.1.4.1.9.9.48.1.1.1.6
+        type: gauge
+
+      - name: cisco_memory_largest_free_bytes
+        oid: 1.3.6.1.4.1.9.9.48.1.1.1.7
+        type: gauge                
