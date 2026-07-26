@@ -4593,22 +4593,50 @@ modules:
       - name: cisco_poe_admin_enable
         oid: 1.3.6.1.2.1.105.1.1.1.3
         type: gauge
+        help: Administrative PoE state of the port
 
         indexes:
           - labelname: group
             type: gauge
           - labelname: port
             type: gauge
+
+        lookups:
+          - labels:
+              - port
+            labelname: ifName
+            oid: 1.3.6.1.2.1.31.1.1.1.1
+            type: DisplayString
+
+          - labels:
+              - port
+            labelname: ifAlias
+            oid: 1.3.6.1.2.1.31.1.1.1.18
+            type: DisplayString
 
       - name: cisco_poe_detection_status
         oid: 1.3.6.1.2.1.105.1.1.1.4
         type: gauge
+        help: Current PoE detection status
 
         indexes:
           - labelname: group
             type: gauge
           - labelname: port
             type: gauge
+
+        lookups:
+          - labels:
+              - port
+            labelname: ifName
+            oid: 1.3.6.1.2.1.31.1.1.1.1
+            type: DisplayString
+
+          - labels:
+              - port
+            labelname: ifAlias
+            oid: 1.3.6.1.2.1.31.1.1.1.18
+            type: DisplayString    
 
       - name: cisco_poe_priority
         oid: 1.3.6.1.2.1.105.1.1.1.5
@@ -4637,19 +4665,47 @@ modules:
       - name: cisco_poe_class
         oid: 1.3.6.1.2.1.105.1.1.1.6
         type: gauge
+        help: Detected IEEE PoE class
 
         indexes:
           - labelname: group
             type: gauge
           - labelname: port
             type: gauge
+
+        lookups:
+          - labels:
+              - port
+            labelname: ifName
+            oid: 1.3.6.1.2.1.31.1.1.1.1
+            type: DisplayString
+
+          - labels:
+              - port
+            labelname: ifAlias
+            oid: 1.3.6.1.2.1.31.1.1.1.18
+            type: DisplayString             
 
       - name: cisco_poe_power_pairs
         oid: 1.3.6.1.2.1.105.1.1.1.7
         type: gauge
+        help: Power pairs in use
 
         indexes:
           - labelname: group
             type: gauge
           - labelname: port
-            type: gauge            
+            type: gauge
+
+        lookups:
+          - labels:
+              - port
+            labelname: ifName
+            oid: 1.3.6.1.2.1.31.1.1.1.1
+            type: DisplayString
+
+          - labels:
+              - port
+            labelname: ifAlias
+            oid: 1.3.6.1.2.1.31.1.1.1.18
+            type: DisplayString                   
