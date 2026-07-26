@@ -24,7 +24,7 @@ readonly MODULE_DIR="${SCRIPT_DIR}/modules"
 
 readonly OUTPUT_FILE="${SCRIPT_DIR}/snmp.yml"
 
-readonly TMP_FILE=""
+TMP_FILE=""
 
 ###############################################################################
 # Colours
@@ -381,7 +381,7 @@ build() {
     # Generated: $(date -u '+%Y-%m-%dT%H:%M:%SZ')
     #
     # DO NOT EDIT
-    #
+    
     ###############################################################################
 
     EOF
@@ -392,12 +392,11 @@ build() {
 
     if [[ -f "${SCRIPT_DIR}/auth.yml" ]]
     then
-
         cat "${SCRIPT_DIR}/auth.yml" >> "${TMP_FILE}"
-
         printf "\n" >> "${TMP_FILE}"
-
     fi
+
+    printf "modules:\n\n" >> "${TMP_FILE}"
 
     ###########################################################################
     # modules
@@ -441,38 +440,23 @@ build() {
         # Přeskočí pouze první výskyt "modules:"
         #
         awk '
-
         BEGIN {
-
             skip=1
+        }
 
-            }
+        skip && /^modules:[[:space:]]*$/ {
+            skip=0
+            next
+        }
 
-            skip && /^modules:[[:space:]]*$/ {
+        skip {
+            next
+        }
 
-                skip=0
-
-                next
-
-            }
-
-            skip {
-
-                next
-
-            }
-
-            {
-
-                print
-
-            }
-
-            ' "$file"
-
+        {
+            print
+        }
         ' "$file" >> "${TMP_FILE}"
-
-        printf "\n" >> "${TMP_FILE}"
 
     done < <(
 
@@ -575,7 +559,8 @@ main() {
 
             log_info "Kontroluji moduly"
 
-            require_file "${SCRIPT_DIR}/auth.yml"
+            [[ -f "${SCRIPT_DIR}/auth.yml" ]] \
+                || log_warn "auth.yml nenalezen."
 
             check_modules
 
