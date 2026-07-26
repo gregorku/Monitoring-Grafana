@@ -451,10 +451,15 @@ EOF
 
     log_ok "Vytvořen ${OUTPUT_FILE}"
 
+    echo "DEBUG: Deploy"
+
     if [[ -d "${STACK_DIR}" ]]
     then
-        cp -f "${OUTPUT_FILE}" "${STACK_FILE}"
+        echo "DEBUG: Copying..."
+        cp -vf "${OUTPUT_FILE}" "${STACK_FILE}"
         log_ok "Aktualizován ${STACK_FILE}"
+    else
+        echo "DEBUG: STACK_DIR neexistuje!"
     fi
 
 }
