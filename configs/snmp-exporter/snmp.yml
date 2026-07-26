@@ -4767,11 +4767,3 @@ modules:
             labelname: supply_name
             oid: 1.3.6.1.4.1.9.9.13.1.5.1.2
             type: DisplayString
-
-      - name: ifInDiscards
-        oid: 1.3.6.1.2.1.2.2.1.13
-        type: counter
-
-      - name: ifOutDiscards
-        oid: 1.3.6.1.2.1.2.2.1.19
-        type: counter
