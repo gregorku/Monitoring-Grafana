@@ -191,7 +191,7 @@ scrape_configs:
           name: 'Cisco_Switch_3560'
     metrics_path: /snmp
     params:
-      module: [mikrotik]             # ZMĚNĚNO z if_mib na mikrotik (modul, který máte v snmp.yml)
+      module: [cisco]             # ZMĚNĚNO z if_mib na mikrotik (modul, který máte v snmp.yml)
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
