@@ -245,37 +245,6 @@ check_module() {
     grep -q '^modules:' "$file" \
         || die "$(basename "$file"): chybí sekce modules:"
 
-    local count
-
-    count=$(
-        awk '
-
-            /^modules:/ {
-
-                inmodules=1
-
-                next
-
-            }
-
-            inmodules && /^[[:space:]][[:space:]]*[A-Za-z0-9_-]+:/ {
-
-                c++
-
-            }
-
-            END {
-
-                print c+0
-
-            }
-
-        ' "$file"
-    )
-
-    [[ "$count" == "1" ]] \
-        || die "$(basename "$file"): musí obsahovat právě jeden modul."
-
     local module
 
     module="$(get_module_name "$file")"
