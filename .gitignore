@@ -9,4 +9,4 @@ configs/traefik/users/dashboard.htpasswd
 # SNMP Exporter
 # ------------------------------------------------------------------
 
-configs/snmp-exporter/snmp.yml
+#configs/snmp-exporter/snmp.yml
