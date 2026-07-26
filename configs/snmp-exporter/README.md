@@ -1,71 +1,227 @@
 # SNMP Exporter
 
-Konfigurace je rozdělena podle výrobců.
+Konfigurace projektu Monitoring-Grafana pro SNMP Exporter.
+
+---
 
 ## Struktura
 
 ```
-modules/
+configs/snmp-exporter/
 
-common.yml
-
-mikrotik.yml
-
-cisco-switch.yml
-
-cisco-poe.yml
-
-cisco-memory.yml
-
-cisco-cpu.yml
+├── auth.yml
+├── build-snmp.sh
+├── generate-modules.sh
+├── generator/
+├── modules/
+└── snmp.yml
 ```
 
 ---
 
-## Přidání nového výrobce
+## auth.yml
 
-Například APC
+Obsahuje SNMP autentizaci.
 
-```
-modules/
+Příklad
 
-apc-ups.yml
-```
+```yaml
+auths:
 
----
+  public_v2:
 
-## Přidání Synology
+    version: 2
 
-```
-modules/
-
-synology.yml
+    community: public
 ```
 
 ---
 
-## Build
+## modules/
+
+Obsahuje jednotlivé moduly.
+
+Každý soubor obsahuje právě jeden modul.
+
+Příklad
 
 ```
+modules/
+
+    mikrotik.yml
+
+    cisco-switch.yml
+
+    cisco-poe.yml
+
+    cisco-cpu.yml
+
+    cisco-memory.yml
+```
+
+Tyto soubory se nikdy neupravují ve výsledném `snmp.yml`.
+
+---
+
+## generator/
+
+Obsahuje pracovní adresář SNMP Generatoru.
+
+```
+generator/
+
+    generator.yml
+
+    mibs/
+
+    output/
+```
+
+---
+
+## build-snmp.sh
+
+Sestaví výsledný `snmp.yml`.
+
+```
+auth.yml
+        │
+        ▼
+modules/*.yml
+        │
+        ▼
+build-snmp.sh
+        │
+        ▼
+snmp.yml
+```
+
+---
+
+## generate-modules.sh
+
+Generuje jednotlivé moduly pomocí oficiálního SNMP Generatoru.
+
+```
+generator.yml
+        │
+        ▼
+SNMP Generator
+        │
+        ▼
+output/snmp.yml
+        │
+        ▼
+generate-modules.sh --split
+        │
+        ▼
+modules/
+```
+
+---
+
+## Workflow
+
+```
+generator.yml
+
+↓
+
+SNMP Generator
+
+↓
+
+output/snmp.yml
+
+↓
+
+generate-modules.sh
+
+↓
+
+modules/
+
+↓
+
+build-snmp.sh
+
+↓
+
+snmp.yml
+
+↓
+
+Docker Stack
+
+↓
+
+SNMP Exporter
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+```
+
+---
+
+## Nikdy neupravovat
+
+```
+snmp.yml
+```
+
+```
+generator/output/snmp.yml
+```
+
+Tyto soubory jsou vždy generované.
+
+---
+
+## Ručně upravovat
+
+```
+auth.yml
+```
+
+```
+modules/
+```
+
+```
+generator/generator.yml
+```
+
+---
+
+## Builder
+
+```
+./build-snmp.sh --check
+
 ./build-snmp.sh
 ```
 
-Výsledkem bude
+---
+
+## Generator
 
 ```
-snmp.yml
+./generate-modules.sh --check
+
+./generate-modules.sh --generate
+
+./generate-modules.sh --split
+
+./generate-modules.sh --all
 ```
 
 ---
 
-## Nikdy needituj
+## Licence
 
-```
-snmp.yml
-```
-
-Editují se pouze soubory v
-
-```
-modules/
-```
+Monitoring-Grafana
