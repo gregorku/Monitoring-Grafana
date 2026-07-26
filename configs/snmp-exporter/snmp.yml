@@ -4411,6 +4411,75 @@ modules:
         - labels: []
           labelname: laIndex
 
+    cisco:
+      walk:
+      #
+      # Standard MIB-II
+      #
+      - 1.3.6.1.2.1.1
+
+      #
+      # Interfaces
+      #
+      - 1.3.6.1.2.1.2
+
+      #
+      # IF-MIB
+      #
+      - 1.3.6.1.2.1.31
+
+      #
+      # Bridge MIB
+      #
+      - 1.3.6.1.2.1.17
+
+      #
+      # POWER-ETHERNET-MIB
+      #
+      - 1.3.6.1.2.1.105
+
+      #
+      # Cisco CPU
+      #
+      - 1.3.6.1.4.1.9.2.1
+
+      #
+      # Cisco Memory
+      #
+      - 1.3.6.1.4.1.9.9.48
+
+      #
+      # Cisco Environment
+      #
+      - 1.3.6.1.4.1.9.9.13
+
+      get:
+      - 1.3.6.1.2.1.1.1.0
+      - 1.3.6.1.2.1.1.3.0
+
+      metrics:
+
+      #
+      # ---------------------------------------------------------------------
+      # System
+      # ---------------------------------------------------------------------
+      #
+
+      - name: sysDescr
+        oid: 1.3.6.1.2.1.1.1
+        type: DisplayString
+        help: System description
+
+      - name: sysUpTime
+        oid: 1.3.6.1.2.1.1.3
+        type: gauge
+        help: System uptime
+
+      - name: sysIdentity
+        oid: 1.3.6.1.2.1.1.5.0
+        type: DisplayString
+        help: Hostname
+
       #
       # ---------------------------------------------------------------------
       # Cisco Interfaces
@@ -4442,7 +4511,8 @@ modules:
             type: gauge
 
         lookups:
-          - labels: [ifIndex]
+          - labels:
+              - ifIndex
             labelname: ifName
             oid: 1.3.6.1.2.1.31.1.1.1.1
             type: DisplayString
@@ -4456,7 +4526,8 @@ modules:
             type: gauge
 
         lookups:
-          - labels: [ifIndex]
+          - labels:
+              - ifIndex
             labelname: ifName
             oid: 1.3.6.1.2.1.31.1.1.1.1
             type: DisplayString
@@ -4470,7 +4541,8 @@ modules:
             type: gauge
 
         lookups:
-          - labels: [ifIndex]
+          - labels:
+              - ifIndex
             labelname: ifName
             oid: 1.3.6.1.2.1.31.1.1.1.1
             type: DisplayString
@@ -4484,7 +4556,8 @@ modules:
             type: gauge
 
         lookups:
-          - labels: [ifIndex]
+          - labels:
+              - ifIndex
             labelname: ifName
             oid: 1.3.6.1.2.1.31.1.1.1.1
             type: DisplayString
@@ -4498,7 +4571,8 @@ modules:
             type: gauge
 
         lookups:
-          - labels: [ifIndex]
+          - labels:
+              - ifIndex
             labelname: ifName
             oid: 1.3.6.1.2.1.31.1.1.1.1
             type: DisplayString
@@ -4512,7 +4586,8 @@ modules:
             type: gauge
 
         lookups:
-          - labels: [ifIndex]
+          - labels:
+              - ifIndex
             labelname: ifName
             oid: 1.3.6.1.2.1.31.1.1.1.1
             type: DisplayString
@@ -4526,7 +4601,8 @@ modules:
             type: gauge
 
         lookups:
-          - labels: [ifIndex]
+          - labels:
+              - ifIndex
             labelname: ifName
             oid: 1.3.6.1.2.1.31.1.1.1.1
             type: DisplayString
@@ -4540,7 +4616,8 @@ modules:
             type: gauge
 
         lookups:
-          - labels: [ifIndex]
+          - labels:
+              - ifIndex
             labelname: ifName
             oid: 1.3.6.1.2.1.31.1.1.1.1
             type: DisplayString
@@ -4554,7 +4631,235 @@ modules:
             type: gauge
 
         lookups:
-          - labels: [ifIndex]
+          - labels:
+              - ifIndex
             labelname: ifName
             oid: 1.3.6.1.2.1.31.1.1.1.1
             type: DisplayString
+
+      #
+      # ---------------------------------------------------------------------
+      # Cisco CPU
+      # ---------------------------------------------------------------------
+      #
+
+      - name: cisco_cpu_5s
+        oid: 1.3.6.1.4.1.9.2.1.56.0
+        type: gauge
+        help: Cisco CPU utilization during the last 5 seconds
+
+      - name: cisco_cpu_1m
+        oid: 1.3.6.1.4.1.9.2.1.57.0
+        type: gauge
+        help: Cisco CPU utilization during the last 1 minute
+
+      - name: cisco_cpu_5m
+        oid: 1.3.6.1.4.1.9.2.1.58.0
+        type: gauge
+        help: Cisco CPU utilization during the last 5 minutes
+
+      #
+      # ---------------------------------------------------------------------
+      # Cisco Memory Pool
+      # ---------------------------------------------------------------------
+      #
+
+      - name: cisco_memory_used_bytes
+        oid: 1.3.6.1.4.1.9.9.48.1.1.1.5
+        type: gauge
+
+        indexes:
+          - labelname: pool
+            type: gauge
+
+        lookups:
+          - labels:
+              - pool
+            labelname: pool_name
+            oid: 1.3.6.1.4.1.9.9.48.1.1.1.2
+            type: DisplayString
+
+      - name: cisco_memory_free_bytes
+        oid: 1.3.6.1.4.1.9.9.48.1.1.1.6
+        type: gauge
+
+        indexes:
+          - labelname: pool
+            type: gauge
+
+        lookups:
+          - labels:
+              - pool
+            labelname: pool_name
+            oid: 1.3.6.1.4.1.9.9.48.1.1.1.2
+            type: DisplayString
+
+      - name: cisco_memory_largest_free_bytes
+        oid: 1.3.6.1.4.1.9.9.48.1.1.1.7
+        type: gauge
+
+        indexes:
+          - labelname: pool
+            type: gauge
+
+        lookups:
+          - labels:
+              - pool
+            labelname: pool_name
+            oid: 1.3.6.1.4.1.9.9.48.1.1.1.2
+            type: DisplayString
+
+      #
+      # ---------------------------------------------------------------------
+      # Cisco PoE Power Budget
+      # ---------------------------------------------------------------------
+      #
+
+      - name: cisco_poe_power_budget_watts
+        oid: 1.3.6.1.2.1.105.1.3.1.1.2
+        type: gauge
+        help: Total available PoE power
+
+        indexes:
+          - labelname: group
+            type: gauge
+
+      - name: cisco_poe_power_remaining_watts
+        oid: 1.3.6.1.2.1.105.1.3.1.1.4
+        type: gauge
+        help: Remaining PoE power
+
+        indexes:
+          - labelname: group
+            type: gauge
+
+      #
+      # ---------------------------------------------------------------------
+      # Cisco PoE Port Status
+      # ---------------------------------------------------------------------
+      #
+
+      - name: cisco_poe_admin_enable
+        oid: 1.3.6.1.2.1.105.1.1.1.3
+        type: gauge
+        help: Administrative PoE state
+
+        indexes:
+          - labelname: group
+            type: gauge
+          - labelname: port
+            type: gauge
+
+      - name: cisco_poe_detection_status
+        oid: 1.3.6.1.2.1.105.1.1.1.4
+        type: gauge
+        help: Current PoE detection status
+
+        indexes:
+          - labelname: group
+            type: gauge
+          - labelname: port
+            type: gauge
+
+      - name: cisco_poe_priority
+        oid: 1.3.6.1.2.1.105.1.1.1.5
+        type: gauge
+        help: Configured PoE priority
+
+        indexes:
+          - labelname: group
+            type: gauge
+          - labelname: port
+            type: gauge
+
+      - name: cisco_poe_class
+        oid: 1.3.6.1.2.1.105.1.1.1.6
+        type: gauge
+        help: IEEE PoE class
+
+        indexes:
+          - labelname: group
+            type: gauge
+          - labelname: port
+            type: gauge
+
+      - name: cisco_poe_power_pairs
+        oid: 1.3.6.1.2.1.105.1.1.1.7
+        type: gauge
+        help: Power pairs in use
+
+        indexes:
+          - labelname: group
+            type: gauge
+          - labelname: port
+            type: gauge
+
+      #
+      # ---------------------------------------------------------------------
+      # Cisco Environment
+      # ---------------------------------------------------------------------
+      #
+
+      - name: cisco_env_temperature
+        oid: 1.3.6.1.4.1.9.9.13.1.3.1.3
+        type: gauge
+        help: Temperature sensor value
+
+        indexes:
+          - labelname: sensor
+            type: gauge
+
+        lookups:
+          - labels:
+              - sensor
+            labelname: sensor_name
+            oid: 1.3.6.1.4.1.9.9.13.1.3.1.2
+            type: DisplayString
+
+      - name: cisco_env_temperature_state
+        oid: 1.3.6.1.4.1.9.9.13.1.3.1.6
+        type: gauge
+        help: Temperature sensor state
+
+        indexes:
+          - labelname: sensor
+            type: gauge
+
+        lookups:
+          - labels:
+              - sensor
+            labelname: sensor_name
+            oid: 1.3.6.1.4.1.9.9.13.1.3.1.2
+            type: DisplayString
+
+      - name: cisco_env_fan_state
+        oid: 1.3.6.1.4.1.9.9.13.1.4.1.2
+        type: gauge
+        help: Fan status
+
+        indexes:
+          - labelname: fan
+            type: gauge
+
+        lookups:
+          - labels:
+              - fan
+            labelname: fan_name
+            oid: 1.3.6.1.4.1.9.9.13.1.4.1.1
+            type: DisplayString
+
+      - name: cisco_env_supply_state
+        oid: 1.3.6.1.4.1.9.9.13.1.5.1.3
+        type: gauge
+        help: Power supply status
+
+        indexes:
+          - labelname: supply
+            type: gauge
+
+        lookups:
+          - labels:
+              - supply
+            labelname: supply_name
+            oid: 1.3.6.1.4.1.9.9.13.1.5.1.2
+            type: DisplayString                        
