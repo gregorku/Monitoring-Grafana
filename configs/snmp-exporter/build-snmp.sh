@@ -215,7 +215,7 @@ get_module_name() {
 
         }
 
-        inmodules && /^[[:space:]][[:space:]][A-Za-z0-9_-]+:/ {
+        inmodules && /^[[:space:]][[:space:]]*[A-Za-z0-9_-]+:/ {
 
             sub(/^[[:space:]]+/, "")
             sub(/:.*/, "")
@@ -258,7 +258,7 @@ check_module() {
 
             }
 
-            inmodules && /^[[:space:]][[:space:]][A-Za-z0-9_-]+:/ {
+            inmodules && /^[[:space:]][[:space:]]*[A-Za-z0-9_-]+:/ {
 
                 c++
 
