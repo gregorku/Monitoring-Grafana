@@ -391,11 +391,11 @@ EOF
         #
         awk '
         BEGIN {
-            skip=1
+            skip = 1
         }
 
         skip && /^modules:[[:space:]]*$/ {
-            skip=0
+            skip = 0
             next
         }
 
@@ -404,9 +404,11 @@ EOF
         }
 
         {
+            # sjednotí odsazení názvu modulu na dvě mezery
+            sub(/^    /, "  ")
+
             print
         }
-
         ' "$file" >> "${TMP_FILE}"
 
         printf "\n" >> "${TMP_FILE}"
