@@ -288,7 +288,6 @@ check_modules() {
 
     done < <(
         find "$MODULE_DIR" \
-            -maxdepth 1 \
             -type f \
             -name "*.yml" \
             -print0 | sort -z
@@ -320,7 +319,6 @@ list_modules() {
 
     done < <(
         find "$MODULE_DIR" \
-            -maxdepth 1 \
             -type f \
             -name "*.yml" \
             -print0 | sort -z
@@ -416,7 +414,6 @@ EOF
     done < <(
 
         find "$MODULE_DIR" \
-            -maxdepth 1 \
             -type f \
             -name "*.yml" \
             -print0 | sort -z
