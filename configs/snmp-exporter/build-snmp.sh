@@ -442,15 +442,21 @@ build() {
         #
         awk '
 
-            BEGIN {
+        BEGIN {
 
-                skip = 1
+            skip=1
 
             }
 
             skip && /^modules:[[:space:]]*$/ {
 
-                skip = 0
+                skip=0
+
+                next
+
+            }
+
+            skip {
 
                 next
 
@@ -461,6 +467,8 @@ build() {
                 print
 
             }
+
+            ' "$file"
 
         ' "$file" >> "${TMP_FILE}"
 
@@ -566,6 +574,8 @@ main() {
         --check)
 
             log_info "Kontroluji moduly"
+
+            require_file "${SCRIPT_DIR}/auth.yml"
 
             check_modules
 
