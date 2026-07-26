@@ -24,6 +24,10 @@ readonly MODULE_DIR="${SCRIPT_DIR}/modules"
 
 readonly OUTPUT_FILE="${SCRIPT_DIR}/snmp.yml"
 
+readonly STACK_DIR="/docker-data/stacks/monitoring-grafana/configs/snmp-exporter"
+
+readonly STACK_FILE="${STACK_DIR}/snmp.yml"
+
 TMP_FILE=""
 
 ###############################################################################
@@ -446,6 +450,12 @@ EOF
     mv "${TMP_FILE}" "${OUTPUT_FILE}"
 
     log_ok "Vytvořen ${OUTPUT_FILE}"
+
+    if [[ -d "${STACK_DIR}" ]]
+    then
+        cp -f "${OUTPUT_FILE}" "${STACK_FILE}"
+        log_ok "Aktualizován ${STACK_FILE}"
+    fi
 
 }
 
