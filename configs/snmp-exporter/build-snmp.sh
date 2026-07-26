@@ -258,7 +258,7 @@ check_module() {
 
             }
 
-            inmodules && /^[[:space:]]{2}[A-Za-z0-9_-]+:/ {
+            inmodules && /^[[:space:]][[:space:]][A-Za-z0-9_-]+:/ {
 
                 c++
 
