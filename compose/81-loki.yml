@@ -1,0 +1,24 @@
+###############################################################################
+# Loki - log storage
+###############################################################################
+services:
+
+  loki:
+    image: grafana/loki:${LOKI_VERSION}
+    container_name: loki
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    command:
+      - -config.file=/etc/loki/loki.yml
+    volumes:
+      - ${DATA_DIR}/loki/data:/loki
+      - ../configs/loki/loki.yml:/etc/loki/loki.yml:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3100/ready || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+    networks:
+      bridge-moje:
+        ipv4_address: ${IP_LOKI}
