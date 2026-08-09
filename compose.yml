@@ -64,6 +64,12 @@ include:
 
   - compose/70-snmp-exporter.yml
 
+  - compose/80-alertmanager.yml
+
+  - compose/81-loki.yml
+
+  - compose/82-alloy.yml
+
   ###########################################################################
   # Local Overrides
   ###########################################################################
