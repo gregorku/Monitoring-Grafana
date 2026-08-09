@@ -45,14 +45,6 @@ schema_config:
         prefix: index_
         period: 24h
 
-ruler:
-  alertmanager_url: http://localhost:9093
-
-# Table manager for retention (optional)
-table_manager:
-  retention_deletes_enabled: false
-  retention_period: 0s
-
 compactor:
   working_directory: /loki
   compactor_ring:
