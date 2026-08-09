@@ -61,6 +61,9 @@ source "${SCRIPT_DIR}/lib/init/crowdsec.sh"
 source "${SCRIPT_DIR}/lib/init/metabase.sh"
 source "${SCRIPT_DIR}/lib/init/grafana.sh"
 source "${SCRIPT_DIR}/lib/init/prometheus.sh"
+source "${SCRIPT_DIR}/lib/init/alertmanager.sh"
+source "${SCRIPT_DIR}/lib/init/loki.sh"
+source "${SCRIPT_DIR}/lib/init/alloy.sh"
 source "${SCRIPT_DIR}/lib/init/watchtower.sh"
 source "${SCRIPT_DIR}/lib/init/summary.sh"
 
@@ -114,6 +117,21 @@ init_grafana
 # Prepare Prometheus layout.
 #
 init_prometheus
+
+#
+# Prepare Alertmanager layout.
+#
+init_alertmanager
+
+#
+# Prepare Loki layout.
+#
+init_loki
+
+#
+# Prepare Alloy layout.
+#
+init_alloy
 
 #
 # Prepare Watchtower layout.

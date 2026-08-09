@@ -42,6 +42,9 @@ init_directories()
     ensure_directory "${METABASE_DIR}"
     ensure_directory "${GRAFANA_DIR}"
     ensure_directory "${PROMETHEUS_DIR}"
+    ensure_directory "${ALERTMANAGER_DIR}"
+    ensure_directory "${LOKI_DIR}"
+    ensure_directory "${ALLOY_DIR}"
 
     log_success "Project directories ready."
 }
