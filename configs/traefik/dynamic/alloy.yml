@@ -1,0 +1,76 @@
+###############################################################################
+#
+# Monitoring-Grafana Project
+#
+# File:
+#   configs/traefik/dynamic/alloy.yml
+#
+# Description:
+#   Grafana Alloy router and service.
+#
+#   Internal only -- published on its own dedicated
+#   "alloy" entryPoint (:8448 / WireGuard wg1) and
+#   protected by default-chain (IP whitelist + BasicAuth),
+#   same as Prometheus and Alertmanager.
+#
+###############################################################################
+
+http:
+
+  ###########################################################################
+  # Routers
+  ###########################################################################
+
+  routers:
+
+    #########################################################################
+    # Grafana Alloy
+    #########################################################################
+
+    alloy:
+
+      entryPoints:
+
+        - alloy
+
+      #
+      # Administration URL
+      #
+      #   https://10.100.100.1:9448/
+      #
+      # (dedicated port -- no subpath)
+      #
+
+      rule: PathPrefix(`/`)
+
+      service: alloy
+
+      middlewares:
+
+        - default-chain
+
+      tls:
+
+        options: default
+
+      priority: 1
+
+  ###########################################################################
+  # Services
+  ###########################################################################
+
+  services:
+
+    ###########################################################################
+    # Grafana Alloy
+    ###########################################################################
+
+    alloy:
+
+      loadBalancer:
+
+        passHostHeader: true
+
+        servers:
+
+          - url: http://alloy:12345

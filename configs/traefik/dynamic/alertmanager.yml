@@ -1,0 +1,76 @@
+###############################################################################
+#
+# Monitoring-Grafana Project
+#
+# File:
+#   configs/traefik/dynamic/alertmanager.yml
+#
+# Description:
+#   Alertmanager router and service.
+#
+#   Internal only -- published on its own dedicated
+#   "alertmanager" entryPoint (:8446 / WireGuard wg1) and
+#   protected by default-chain (IP whitelist + BasicAuth),
+#   same as Prometheus.
+#
+###############################################################################
+
+http:
+
+  ###########################################################################
+  # Routers
+  ###########################################################################
+
+  routers:
+
+    #########################################################################
+    # Alertmanager
+    #########################################################################
+
+    alertmanager:
+
+      entryPoints:
+
+        - alertmanager
+
+      #
+      # Administration URL
+      #
+      #   https://10.100.100.1:9446/
+      #
+      # (dedicated port -- no subpath)
+      #
+
+      rule: PathPrefix(`/`)
+
+      service: alertmanager
+
+      middlewares:
+
+        - default-chain
+
+      tls:
+
+        options: default
+
+      priority: 1
+
+  ###########################################################################
+  # Services
+  ###########################################################################
+
+  services:
+
+    #########################################################################
+    # Alertmanager
+    #########################################################################
+
+    alertmanager:
+
+      loadBalancer:
+
+        passHostHeader: true
+
+        servers:
+
+          - url: http://alertmanager:9093

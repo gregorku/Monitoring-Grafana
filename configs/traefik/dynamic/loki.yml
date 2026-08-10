@@ -1,0 +1,76 @@
+###############################################################################
+#
+# Monitoring-Grafana Project
+#
+# File:
+#   configs/traefik/dynamic/loki.yml
+#
+# Description:
+#   Loki router and service.
+#
+#   Internal only -- published on its own dedicated
+#   "loki" entryPoint (:8447 / WireGuard wg1) and
+#   protected by default-chain (IP whitelist + BasicAuth),
+#   same as Prometheus and Alertmanager.
+#
+###############################################################################
+
+http:
+
+  ###########################################################################
+  # Routers
+  ###########################################################################
+
+  routers:
+
+    #########################################################################
+    # Loki
+    #########################################################################
+
+    loki:
+
+      entryPoints:
+
+        - loki
+
+      #
+      # Administration / API URL
+      #
+      #   https://10.100.100.1:9447/
+      #
+      # (dedicated port -- no subpath)
+      #
+
+      rule: PathPrefix(`/`)
+
+      service: loki
+
+      middlewares:
+
+        - default-chain
+
+      tls:
+
+        options: default
+
+      priority: 1
+
+  ###########################################################################
+  # Services
+  ###########################################################################
+
+  services:
+
+    #########################################################################
+    # Loki
+    #########################################################################
+
+    loki:
+
+      loadBalancer:
+
+        passHostHeader: true
+
+        servers:
+
+          - url: http://loki:3100
