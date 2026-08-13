@@ -1,23 +1,20 @@
 ```yaml
 ###############################################################################
 #
-# Monitoring-Grafana Project
+# Monitoring-Grafana
 #
 # File:
 #   configs/traefik/dynamic/vault.yml
 #
 # Description:
-#   Central Traefik route to HashiCorp Vault running in a
-#   separate Incus container.
+#   Test route from the central Traefik to HashiCorp Vault
+#   running in a separate Incus container.
 #
-# Backend:
-#
-#   Vault Incus container
-#   IP: 10.10.10.11
-#   Port: 8200
+# Vault:
+#   Incus IP: 10.10.10.11
+#   HTTP port: 8200
 #
 # Public hostname:
-#
 #   vault.serveftp.org
 #
 ###############################################################################
@@ -32,44 +29,14 @@ http:
 
     vault:
 
-      #
-      # Central HTTPS entryPoint.
-      #
-
       entryPoints:
-
         - websecure
-
-      #
-      # Public Vault hostname.
-      #
 
       rule: "Host(`vault.serveftp.org`)"
 
-      #
-      # Vault backend service defined below.
-      #
-
       service: vault
 
-      #
-      # For the first test use the same public security chain
-      # as other Internet-facing applications.
-      #
-      # We will decide later whether Vault should have a
-      # dedicated, stricter middleware chain.
-      #
-
-      middlewares:
-
-        - public-chain
-
-      #
-      # TLS is terminated by the central Traefik.
-      #
-
       tls:
-
         certResolver: letsencrypt
 
 
@@ -83,18 +50,9 @@ http:
 
       loadBalancer:
 
-        #
-        # Preserve the original Host header.
-        #
-
         passHostHeader: true
 
         servers:
-
-          #
-          # Vault is running in a separate Incus container,
-          # therefore Docker DNS cannot be used here.
-          #
 
           - url: "http://10.10.10.11:8200"
 ```
