@@ -16,7 +16,6 @@
 #   Port: 8200
 #
 # Public hostname:
-#
 #   vault.serveftp.org
 #
 ###############################################################################
@@ -37,6 +36,9 @@ http:
       rule: "Host(`vault.serveftp.org`)"
 
       service: vault
+
+      middlewares:
+        - public-chain
 
       tls:
         certResolver: letsencrypt
