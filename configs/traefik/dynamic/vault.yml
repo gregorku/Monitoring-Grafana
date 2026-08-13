@@ -1,20 +1,22 @@
-```yaml
 ###############################################################################
 #
-# Monitoring-Grafana
+# Monitoring-Grafana Project
 #
 # File:
 #   configs/traefik/dynamic/vault.yml
 #
 # Description:
-#   Test route from the central Traefik to HashiCorp Vault
-#   running in a separate Incus container.
+#   Central Traefik route to HashiCorp Vault running in a
+#   separate Incus container.
 #
-# Vault:
-#   Incus IP: 10.10.10.11
-#   HTTP port: 8200
+# Backend:
+#
+#   Vault Incus container
+#   IP: 10.10.10.11
+#   Port: 8200
 #
 # Public hostname:
+#
 #   vault.serveftp.org
 #
 ###############################################################################
@@ -55,4 +57,3 @@ http:
         servers:
 
           - url: "http://10.10.10.11:8200"
-```
