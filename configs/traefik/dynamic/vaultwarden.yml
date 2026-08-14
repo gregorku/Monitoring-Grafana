@@ -3,20 +3,21 @@
 # Monitoring-Grafana Project
 #
 # File:
-#   configs/traefik/dynamic/vault.yml
+#   configs/traefik/dynamic/vaultwarden.yml
 #
 # Description:
-#   Central Traefik route to HashiCorp Vault running in a
+#   Central Traefik route to Vaultwarden running in a
 #   separate Incus container.
 #
 # Backend:
 #
-#   Vault Incus container
-#   IP: 10.10.10.11
-#   Port: 8200
+#   Vaultwarden Incus container
+#   IP: 10.10.10.12
+#   Port: 8080
 #
 # Public hostname:
-#   secrets.serveftp.org
+#
+#   vault.serveftp.org
 #
 ###############################################################################
 
@@ -28,19 +29,37 @@ http:
 
   routers:
 
-    vault:
+    vaultwarden:
 
       entryPoints:
+
         - websecure
 
-      rule: "Host(`secrets.serveftp.org`)"
+      #
+      # Bitwarden / Vaultwarden public hostname.
+      #
 
-      service: vault
+      rule: "Host(`vault.serveftp.org`)"
+
+      service: vaultwarden
+
+      #
+      # Public security chain.
+      #
+      # Authentication is NOT performed by Traefik.
+      # Vaultwarden handles Bitwarden authentication itself.
+      #
 
       middlewares:
+
         - public-chain
 
+      #
+      # TLS is terminated by the central Traefik.
+      #
+
       tls:
+
         certResolver: letsencrypt
 
 
@@ -50,12 +69,20 @@ http:
 
   services:
 
-    vault:
+    vaultwarden:
 
       loadBalancer:
+
+        #
+        # Preserve the original Host header.
+        #
 
         passHostHeader: true
 
         servers:
 
-          - url: "http://10.10.10.11:8200"
+          #
+          # Vaultwarden Incus container.
+          #
+
+          - url: "http://10.10.10.12:8080"
